@@ -6,7 +6,13 @@ namespace IntroductionToCSharp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+
+            //Numbers.WorkWithIntegers();
+            //Numbers.OrderPrecedence();
+            //Numbers.TestLimits();
+            //Numbers.WorkWithDoubles();
+            Numbers.WorkWithDecimals();
+
         }
     }
 }
