@@ -6,7 +6,10 @@ namespace IntroductionToCSharp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            //BranchesAndLoops.ExploreIf();
+            //BranchesAndLoops.ExploreLoops();
+            BranchesAndLoops.ChallengeAnswer();
         }
     }
 }
+
