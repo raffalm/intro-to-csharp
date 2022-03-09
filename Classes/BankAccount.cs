@@ -21,15 +21,20 @@ namespace IntroductionToCSharp.Classes
                 return balance;
             }
         }
+        private readonly decimal _minimulBalance;
         private static int accountNumberSeed = 1234567890;
         private List<Transaction> allTransactions = new List<Transaction>();
-        public BankAccount(string name, decimal initialBalance)
+        public BankAccount(string name, decimal initialBalance):this(name, initialBalance, 0) { }
+        public BankAccount(string name, decimal initialBalance,decimal minimumBalance)
         {
-            this.Owner = name;
-            this.Number = accountNumberSeed.ToString();
+            Owner = name;
+            _minimulBalance = minimumBalance;
+            Number = accountNumberSeed.ToString();
             accountNumberSeed++;
-            MakeDeposit(initialBalance, DateTime.Now, "Initial balance");
+            if(initialBalance>0)
+                MakeDeposit(initialBalance, DateTime.Now, "Initial balance");
         }
+        public virtual void PerformMonthEndTransactions() { }
         public void MakeDeposit(decimal amount, DateTime date, string note)
         {
             if (amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount), "Amount of deposite must be positive");
@@ -38,11 +43,22 @@ namespace IntroductionToCSharp.Classes
         public void MakeWithdrawal(decimal amount, DateTime date, string note)
         {
             if (amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount), "Amount of withdrawal must be positive");
-            if(Balance-amount<0) throw new InvalidOperationException("Not sufficient funds for this withdrawal");
-            allTransactions.Add(new Transaction(-amount, date, note));
+
+            Transaction? overdraftTransaction = CheckWithdrawalLimit(Balance - amount < _minimulBalance);
+            if (overdraftTransaction != null) allTransactions.Add(overdraftTransaction);
+
+            Transaction? withdrawal = new Transaction(-amount, date, note);
+            allTransactions.Add(withdrawal);
                 
         }
-        public string GetAcountHistory()
+        protected virtual Transaction? CheckWithdrawalLimit(bool isOverdrawn)
+        {
+            if (isOverdrawn)
+                throw new InvalidOperationException("Not sufficient funds for this withdrawal");
+            else
+                return default;
+        }
+        public string GetAccountHistory()
         {
             StringBuilder report = new StringBuilder();
             decimal balance = 0;
